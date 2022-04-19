@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Post;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,8 +16,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+// Route::get('/', function () {
+//     return view('layouts.temp');
+// });
+
+Route::controller(PostController::class)->group(function() {
+    Route::get('/', 'latestPosts')->name('latest');
+    Route::post('/addPost', 'addPost');
+    Route::get('/writePost', 'writePost');
+    Route::get('/like/post/{id}', 'likePost');
+    Route::get('/post/{id}', 'selectPost');
+    Route::post('/addComment', 'addComment');
+    Route::get('/show/user/{id}', 'userPage');
+});
+
+Route::get('/trends', function() {
+    return view('post.trends');
 });
 
 Auth::routes();
