@@ -28,6 +28,8 @@ Route::controller(PostController::class)->group(function() {
     Route::get('/post/{id}', 'selectPost');
     Route::post('/addComment', 'addComment');
     Route::get('/show/user/{id}', 'userPage');
+    Route::get('/comment/replies/{id}', 'getReplies');
+    Route::get('/like/com/{id}', 'likeCom');
 });
 
 Route::get('/trends', function() {

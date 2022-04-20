@@ -72,14 +72,16 @@
     </div>
     
 
-    <footer class=".navbar-fixed-bottom text-center" style="background-color:#a4dbaf;">
-        <br>
+    <footer class="text-center" style="background-color:#a4dbaf;margin-top:100px">
+
+        <h5>
     {{ config('app.name', 'Laravel') }}
     |
     <?php 
         echo date('Y');
     ?>
-    <br>
+    </h5>
+
     <hr>
     </footer>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,6 +88,39 @@ class PostController extends Controller
         }
         return [$icon, $likes];
     }
+    public function likeCom($id)
+    {
+        $likes = 0;
+        $userid = Auth::id();
+        $icon = 'liked';
+        $count = DB::table('liked_comments')
+        ->where('userId', '=', $userid)
+        ->where('commentId', '=', $id)
+        ->count();
+
+        if($count==0){
+            DB::table('liked_comments')
+                ->insert([
+                    'userId' => $userid,
+                    'commentId' => $id 
+                ]);
+            $com = Comment::find($id);
+            $com->likes = $com->likes+1;
+            $likes = $com->likes;
+            $com->save();
+        }
+        else{
+            DB::table('liked_comments')
+            ->where('userId', '=', $userid)
+            ->where('commentId', '=', $id)
+            ->delete();
+            $com = Comment::find($id);
+            $com->likes = $com->likes-1;
+            $likes = $com->likes;
+            $com->save();
+        }
+        return [$icon, $likes];
+    }
 
     public function selectPost($id)
     {
@@ -96,7 +130,16 @@ class PostController extends Controller
             $icon = 'liked';
         }
         $post = Post::find($id);
-        return view('post.select', ['post' => $post, 'icon' => $icon]);
+        $comments = DB::table('comments')->where('parentId', '=', $id)->where('toPost', '=', 1)->get();
+        $comAuthors = array();
+        $comReply = array();
+        foreach($comments as $com){
+            $user = User::find($com->userId)->get('name');
+            $comAuthors[$com->id] = $user[0]->name;
+            $amountOfReplies = DB::table('comments')->where('parentId', '=', $com->id)->where('toPost', '=', 0)->count();
+            $comReply[$com->id] = $amountOfReplies;
+        }
+        return view('post.select', ['post' => $post, 'icon' => $icon, 'comments' => $comments, 'comAuthor' => $comAuthors, 'comReply' => $comReply]);
     }
 
     public function addComment(Request $request)
@@ -104,7 +147,7 @@ class PostController extends Controller
         $bool = false;
         $type = $request->type;
         if ($type=="Post") $bool = true;  
-        Comment::create([
+        $com = Comment::create([
             'parentId' => $request->parent,
             'userId' => Auth::id(),
             'likes' => 0,
@@ -117,5 +160,16 @@ class PostController extends Controller
     public function userPage($id)
     {
         return view('user', ['id'=>$id]);
+    }
+    public function getReplies($id)
+    {
+        $usersNames = array();
+        $replies = Comment::where('parentId', '=', $id)->where('toPost', 0)->select('description', 'userId', 'likes')->get();
+        foreach($replies as $reply)
+        {
+            $usersNames[$reply->userId] = User::find($reply->userId)->get('name');
+        }
+        $amount = $replies->count();
+        return [$replies, $usersNames, $amount];
     }
 }
