@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,10 @@ Route::controller(PostController::class)->group(function() {
     Route::get('/show/user/{id}', 'userPage');
     Route::get('/comment/replies/{id}', 'getReplies');
     Route::get('/like/com/{id}', 'likeCom');
+});
+
+Route::controller(AdminController::class)->group(function() {
+    Route::get('/admin', 'test');
 });
 
 Route::get('/trends', function() {
