@@ -72,7 +72,7 @@
     </div>
     
 
-    <footer class="text-center" style="background-color:#a4dbaf;margin-top:100px">
+    <footer class="text-center fixed-bottom" style="background-color:#a4dbaf;margin-top:100px">
 
         <h5>
     {{ config('app.name', 'Laravel') }}

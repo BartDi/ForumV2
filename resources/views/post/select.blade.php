@@ -13,7 +13,7 @@
             </div>
             <div class="card-body">
                 <a class="text-decoration-none" style="color:#305939;" href='{{url("/post/{$post->id}")}}'><h3 class="card-title text-center">{{ $post->title }}</h3></a>
-                <p class="card-text">{{ substr($post->description, 0, 500) }}<a href='{{url("/post/{$post->id}")}}' style="color:#579e65;">See More</a></p>
+                <p class="card-text">{{ substr($post->description, 0, 500) }}</p>
             </div>
             <div class="card-footer">
                 <h4 class="float-start mx-1 mt-1">{{ $post->likes }}</h4>
